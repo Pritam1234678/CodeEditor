@@ -3,7 +3,7 @@ const app = express();
 const bodyP = require("body-parser");
 const compiler = require("compilex");
 const cors = require("cors");
-const fs = require("fs");
+const path = require("path"); // Add this for resolving paths
 
 const options = { stats: true };
 compiler.init(options);
@@ -11,18 +11,19 @@ compiler.init(options);
 app.use(cors());
 app.use(bodyP.json());
 
-app.use(
-  "/codemirror-5.65.19",
-  express.static("D:/CodeEditor/codemirror-5.65.19")
-);
+// Serve static files (e.g., codemirror and index.html)
+app.use("/codemirror-5.65.19", express.static(path.join(__dirname, "codemirror-5.65.19")));
+app.use(express.static(__dirname)); // Serve all static files from the project directory
 
+// Serve index.html
 app.get("/", function (req, res) {
   compiler.flush(() => {
     console.log("Deleted previous files.");
   });
-  res.sendFile("D:/CodeEditor/index.html");
+  res.sendFile(path.join(__dirname, "index.html")); // Use relative path
 });
 
+// Compilation logic remains unchanged
 app.post("/compile", function (req, res) {
   const code = req.body.code;
   const input = req.body.input;
@@ -66,7 +67,7 @@ app.post("/compile", function (req, res) {
       if (!input) compiler.compilePython(envData, code, cb);
       else compiler.compilePythonWithInput(envData, code, input, cb);
 
-    }  else {
+    } else {
       res.send({ output: "Unsupported language selected." });
     }
   } catch (err) {
