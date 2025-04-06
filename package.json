@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "api.js",
   "scripts": {
-    "start": "node api.js",
+    "start": "node Api.js",
     "build": "echo 'Skipping system package install in Render'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
